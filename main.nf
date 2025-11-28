@@ -9,7 +9,7 @@ process fastp {
   stageOutMode 'move'
 
   input:
-    tuple val(sample_id), path(reads)   // reads = [R1, R2]
+    tuple val(sample_id), path(reads) 
 
   publishDir "${params.project_folder}/${fastp_output}", mode: 'copy'
 
@@ -37,9 +37,11 @@ workflow {
   def outdir = "${params.project_folder}/${fastp_output}"
 
   def data = Channel.fromFilePairs(
-    "${params.fastqc_raw_data}/*_{R1,R2}.fastq.gz",
+    "${params.fastqc_raw_data}/${params.fastp_pattern}",
     flat: true
   )
+
+  data.view { sample_id, reads -> "FASTP INPUT  ${sample_id}  ->  ${reads[0].getName()} , ${reads[1].getName()}" }
 
   data = data.filter { sample_id, reads ->
     ! file("${outdir}/${sample_id}.fastp.html").exists()
