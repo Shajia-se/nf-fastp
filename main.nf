@@ -9,7 +9,7 @@ process fastp {
   tag "${sample_id}"
 
   input:
-    tuple val(sample_id), path(reads)   // reads = [R1, R2]
+    tuple val(sample_id), path(read1), path(read2)
 
   publishDir "${params.project_folder}/${fastp_output}", mode: 'copy'
 
@@ -39,7 +39,7 @@ workflow {
     flat: true
   )
 
-  data = data.filter { sample_id, reads ->
+  data = data.filter { sample_id, read1, read2 ->
       def report = new File("${params.project_folder}/${fastp_output}/${sample_id}.fastp.html")
       ! report.exists()
   }
