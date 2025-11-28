@@ -53,10 +53,10 @@ workflow {
   def outdir = "${params.project_folder}/${fastp_output}"
 
   def ch = Channel
-    .fromFilePairs("${params.fastp_raw_data}/*_{R1,R2}.fastq.gz", flat: true)
+    .fromFilePairs("${params.fastqc_raw_data}/*_{R1,R2}.fastq.gz", flat: true)
     .ifEmpty {
       Channel
-        .fromPath("${params.fastp_raw_data}/*fastq.gz")
+        .fromPath("${params.fastqc_raw_data}/*fastq.gz")
         .map { f ->
           tuple(f.simpleName.replaceAll(/.fastq.gz$/, ''), f)
         }
