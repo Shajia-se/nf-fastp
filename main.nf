@@ -4,12 +4,12 @@ nextflow.enable.dsl=2
 def fastp_output = params.fastp_output ?: "fastp_output"
 
 process fastp {
-  tag "${sample_id}"
   stageInMode 'symlink'
   stageOutMode 'move'
+  tag "${sample_id}"
 
   input:
-    tuple val(sample_id), path(reads) 
+    tuple val(sample_id), path(reads)   // reads = [R1, R2]
 
   publishDir "${params.project_folder}/${fastp_output}", mode: 'copy'
 
@@ -22,29 +22,26 @@ process fastp {
   script:
   """
   fastp \\
-    -i ${reads[0]} \\
-    -I ${reads[1]} \\
-    -o ${sample_id}_R1.fastp.trimmed.fastq.gz \\
-    -O ${sample_id}_R2.fastp.trimmed.fastq.gz \\
-    -j ${sample_id}.fastp.json \\
-    -h ${sample_id}.fastp.html \\
-    -w ${task.cpus}
+      -i ${reads[0]} \\
+      -I ${reads[1]} \\
+      -o ${sample_id}_R1.fastp.trimmed.fastq.gz \\
+      -O ${sample_id}_R2.fastp.trimmed.fastq.gz \\
+      -j ${sample_id}.fastp.json \\
+      -h ${sample_id}.fastp.html \\
+      -w ${task.cpus}
   """
 }
 
 workflow {
 
-  def outdir = "${params.project_folder}/${fastp_output}"
-
   def data = Channel.fromFilePairs(
-    "${params.fastqc_raw_data}/${params.fastp_pattern}",
+    "${params.fastqc_raw_data}/*_{R1,R2}_001.fastq.gz",
     flat: true
   )
 
-  data.view { sample_id, reads -> "FASTP INPUT  ${sample_id}  ->  ${reads[0].getName()} , ${reads[1].getName()}" }
-
   data = data.filter { sample_id, reads ->
-    ! file("${outdir}/${sample_id}.fastp.html").exists()
+      def report = new File("${params.project_folder}/${fastp_output}/${sample_id}.fastp.html")
+      ! report.exists()
   }
 
   fastp(data)
