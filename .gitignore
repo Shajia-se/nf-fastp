@@ -1,0 +1,71 @@
+# -------------------------
+# NEXTFLOW PROJECT IGNORE
+# -------------------------
+
+# Nextflow working directories
+work/
+.nextflow*
+.cache/
+*.nf.cache
+*.command.*
+*.log
+pipeline_info/
+timeline.html
+report.html
+dag.svg
+trace.txt
+
+# Output directories (modify to your project names)
+results/
+output/
+bwa_output/
+fastqc_output/
+cutadapt_output/
+multiqc_output/
+
+# Large data folders
+data/
+raw_data/
+fastq/
+fastq_raw/
+reference/
+genomes/
+indices/
+
+# Local test data
+test_data/
+
+# Temporary run folders
+tmp/
+temp/
+
+# Container images (Docker/Singularity)
+*.sif
+*.img
+*.simg
+*.sqsh
+
+# Conda envs
+.nf-conda/
+.conda/
+conda_env/
+
+# -------------------------
+# PYTHON & GENERAL (kept minimal)
+# -------------------------
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+
+# -------------------------
+# EDITOR / OS
+# -------------------------
+.DS_Store
+.idea/
+.vscode/
