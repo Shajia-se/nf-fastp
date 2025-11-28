@@ -22,8 +22,8 @@ process fastp {
   script:
   """
   fastp \\
-      -i ${reads[0]} \\
-      -I ${reads[1]} \\
+      -i ${reads1} \\
+      -I ${reads2} \\
       -o ${sample_id}_R1.fastp.trimmed.fastq.gz \\
       -O ${sample_id}_R2.fastp.trimmed.fastq.gz \\
       -j ${sample_id}.fastp.json \\
