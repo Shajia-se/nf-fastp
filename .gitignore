@@ -20,8 +20,13 @@ results/
 output/
 bwa_output/
 fastqc_output/
+fastp_output/
 cutadapt_output/
 multiqc_output/
+picard_output/
+chipfilter_output/
+macs3_output/
+demo_data
 
 # Large data folders
 data/
@@ -56,6 +61,7 @@ conda_env/
 __pycache__/
 *.py[cod]
 .ipynb_checkpoints
+configs/.ipynb_checkpoints
 
 # Virtual environments
 .env
