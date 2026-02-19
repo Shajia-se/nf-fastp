@@ -34,10 +34,12 @@ process fastp {
 
 workflow {
 
+  def pattern = params.fastp_pattern ?: "*_R{1,2}_001.fastq.gz"
   def data = Channel.fromFilePairs(
-    "${params.fastqc_raw_data}/*_{R1,R2}_001.fastq.gz",
-    flat: true
-  )
+    "${params.fastqc_raw_data}/${pattern}",
+    flat: true,
+    checkIfExists: true
+  ).ifEmpty { exit 1, "ERROR: No FASTQ pairs found for pattern: ${params.fastqc_raw_data}/${pattern}" }
 
   data = data.filter { sample_id, read1, read2 ->
       def report = new File("${params.project_folder}/${fastp_output}/${sample_id}.fastp.html")
