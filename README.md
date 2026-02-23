@@ -14,14 +14,19 @@ Compared with older multi-tool workflows, `fastp` runs these steps in one comman
 
 ## What This Module Does
 
-1. Reads paired FASTQ files from input directory.
+1. Reads paired FASTQ files (priority: `samples_master` > `fastp_raw_data + fastp_pattern`).
 2. Skips samples that already have `${sample}.fastp.html` in output.
 3. Runs `fastp` for each sample pair.
 4. Publishes trimmed FASTQ and reports to output directory.
 
 ## Input
 
-- Directory: `params.fastqc_raw_data`
+Preferred mode (`samples_master`):
+- `params.samples_master`: CSV with at least `sample_id,fastq_r1,fastq_r2` (optional `enabled`)
+- module runs only rows with `enabled=true` (or empty)
+
+Fallback mode (pattern-based):
+- Directory: `params.fastp_raw_data`
 - Pattern: `params.fastp_pattern` (default: `*_R{1,2}_001.fastq.gz`)
 - Expected input: paired-end reads (`R1`/`R2`)
 
@@ -36,7 +41,8 @@ Under `${project_folder}/${fastp_output}` (default `./fastp_output/`):
 ## Key Parameters
 
 - `project_folder`: output base folder (default: `$PWD`)
-- `fastqc_raw_data`: input FASTQ folder
+- `samples_master`: preferred input table
+- `fastp_raw_data`: fallback input FASTQ folder
 - `fastp_pattern`: paired FASTQ matching pattern
 - `fastp_output`: output folder name
 - `cpus`, `memory`, `time`: process resources
@@ -51,11 +57,18 @@ nextflow run main.nf -profile local
 nextflow run main.nf -profile hpc
 ```
 
-Custom input/output example:
+Recommended run (`samples_master`):
+```bash
+nextflow run main.nf -profile hpc \
+  --samples_master /path/to/samples_master.csv \
+  --fastp_output fastp_output
+```
+
+Fallback run (pattern):
 
 ```bash
 nextflow run main.nf -profile hpc \
-  --fastqc_raw_data /your/raw_fastq \
+  --fastp_raw_data /your/raw_fastq \
   --fastp_pattern "*_R{1,2}_001.fastq.gz" \
   --fastp_output fastp_output
 ```
