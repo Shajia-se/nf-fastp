@@ -62,6 +62,9 @@ workflow {
       }
       .ifEmpty { exit 1, "ERROR: No enabled paired-end rows found in samples_master: ${params.samples_master}" }
   } else {
+    if (!raw_data_dir) {
+      exit 1, "ERROR: Either --samples_master or --fastp_raw_data must be provided"
+    }
     def pattern = params.fastp_pattern ?: "*_R{1,2}_001.fastq.gz"
     data = Channel.fromFilePairs(
       "${raw_data_dir}/${pattern}",
@@ -71,8 +74,12 @@ workflow {
   }
 
   data = data.filter { sample_id, read1, read2 ->
-      def report = file("${params.project_folder}/${fastp_output}/${sample_id}.fastp.html")
-      ! report.exists()
+      def outdir = "${params.project_folder}/${fastp_output}"
+      def r1 = file("${outdir}/${sample_id}_R1.fastp.trimmed.fastq.gz")
+      def r2 = file("${outdir}/${sample_id}_R2.fastp.trimmed.fastq.gz")
+      def html = file("${outdir}/${sample_id}.fastp.html")
+      def json = file("${outdir}/${sample_id}.fastp.json")
+      !(r1.exists() && r2.exists() && html.exists() && json.exists())
   }
 
   fastp(data)
